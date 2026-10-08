@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prevención de Incendios - San Juan</title>
+    <style>
+        :root {
+            --primary: #ff4d4d;
+            --secondary: #ff9933;
+            --dark: #222222;
+            --light: #f4f4f4;
+            --success: #28a745;
+            --danger: #dc3545;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .phone-container {
+            width: 100%;
+            max-width: 400px;
+            height: 750px;
+            background: #ffffff;
+            color: var(--dark);
+            border-radius: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            border: 10px solid #333;
+        }
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        .alert-banner {
+            background: #ffeeba;
+            color: #856404;
+            padding: 10px;
+            font-size: 0.85rem;
+            text-align: center;
+            font-weight: bold;
+            border-bottom: 1px solid #ffeeba;
+        }
+        .content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .menu-btn {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border-radius: 12px;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            border: none;
+            width: 100%;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.1s ease;
+        }
+        .menu-btn:active {
+            transform: scale(0.98);
+        }
+        .btn-prev { background-color: #ff5722; }
+        .btn-game { background-color: #4caf50; }
+        .btn-trivia { background-color: #2196f3; }
+        .btn-report { background-color: #e91e63; }
+        .btn-support { background-color: #ff9800; }
+        
+        .view {
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+            height: 100%;
+        }
+        .view.active {
+            display: flex;
+        }
+        .back-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            align-self: flex-start;
+            font-weight: bold;
+        }
+        /* Estilos para el juego */
+        .game-area {
+            background: #e0e0e0;
+            height: 250px;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            cursor: crosshair;
+        }
+        .hazard {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: var(--danger);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1.2); }
+        }
+        /* Estilos de formulario y modales internos */
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            margin-top: 5px;
+        }
+        .trivia-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .trivia-opt-btn {
+            padding: 12px;
+            background: #f1f1f1;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+            font-weight: 500;
+        }
+        .trivia-opt-btn:hover {
+            background: #e2e2e2;
+        }
+    </style>
+</head>
+<body>
+
+<div class="phone-container">
+    <div class="header">🔥 Prevención Incendios San Juan</div>
+    <div class="alert-banner">⚠️ Alerta Zonda: Extrema precaución por vientos y altas temperaturas.</div>
+
+    <div class="content">
+        <!-- VISTA MENÚ PRINCIPAL -->
+        <div id="main-menu" class="view active">
+            <p style="text-align: center; color: #555; font-size: 0.95rem;">Selecciona una opción del sistema:</p>
+            <button class="menu-btn btn-prev" onclick="showView('prev-view')">🛡️ Prevención y Consejos</button>
+            <button class="menu-btn btn-game" onclick="startAppGame()">🎮 Desafío Riesgo Antorcha</button>
+            <button class="menu-btn btn-trivia" onclick="startTrivia()">🧠 Trivia Interactiva</button>
+            <button class="menu-btn btn-report" onclick="showView('report-view')">🚨 Denuncia Anónima</button>
+            <button class="menu-btn btn-support" onclick="showView('support-view')">⭐ Apoyar Proyecto</button>
+        </div>
+
+        <!-- VISTA PREVENCIÓN -->
+        <div id="prev-view" class="view">
+            <button class="back-btn" onclick="showView('main-menu')">← Volver</button>
+            <h3>Guía de Prevención</h3>
+            <div style="font-size: 0.9rem; line-height: 1.4; overflow-y: auto; flex: 1;">
+                <p><b>1. Viento Zonda:</b> Evita quemas de hojas, poda o basura. El viento propaga focos a velocidad crítica.</p><br>
+                <p><b>2. Fogatas:</b> Nunca dejes fogatas encendidas sin supervisión. Apágalas completamente con abundante agua y tierra.</p><br>
+                <p><b>3. Animales silvestres:</b> Ante un incendio, avisa de inmediato. Los animales huyen hacia zonas urbanas.</p>
+            </div>
+        </div>
+
+        <!-- VISTA JUEGO -->
+        <div id="game-view" class="view">
+            <button class="back-btn" onclick="showView('main-menu')">← Volver</button>
+            <h3>Atrapa Riesgos (Zonda)</h3>
+            <p style="font-size: 0.85rem;">Elimina los focos y basura antes de que exploten. ¡El viento acelera el nivel!</p>
+            <div id="game-board" class="game-board game-area"></div>
+            <div style="display: flex; justify-content: space-between; font-weight: bold;">
+                <span id="game-score">Puntaje: 0</span>
+                <span id="game-timer">Tiempo: 20s</span>
+            </div>
+        </div>
+
+        <!-- VISTA TRIVIA -->
+        <div id="trivia-view" class="view">
+            <button class="back-btn" onclick="showView('main-menu')">← Volver</button>
+            <h3>Trivia de Supervivencia</h3>
+            <div id="trivia-container" style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                <!-- Dinámico -->
+            </div>
+        </div>
+
+        <!-- VISTA DENUNCIAS -->
+        <div id="report-view" class="view">
+            <button class="back-btn" onclick="showView('main-menu')">← Volver</button>
+            <h3>Denuncia Anónima</h3>
+            <label style="font-size: 0.85rem;">Ubicación o descripción del foco:</label>
+            <textarea id="report-text" rows="3" placeholder="Ej: Foco de incendio en zona de baldíos..."></textarea>
+            <button class="menu-btn btn-report" style="padding: 10px; font-size: 1rem; margin-top: 10px;" onclick="sendReport()">Enviar Denuncia</button>
+        </div>
+
+        <!-- VISTA APOYO / ALIAS -->
+        <div id="support-view" class="view">
+            <button class="back-btn" onclick="showView('main-menu')">← Volver</button>
+            <h3>Apoya el Desarrollo</h3>
+            <p style="font-size: 0.9rem; text-align: center; margin-top: 10px;">Tu ayuda y tu apoyo son fundamentales para seguir mejorando nuestros equipos y continuar protegiendo a la comunidad.</p>
+            <div style="background: #f8f9fa; border: 2px dashed #ff9800; padding: 15px; text-align: center; border-radius: 10px; margin-top: 15px;">
+                <b style="font-size: 1.1rem; color: #d35400;">AFERNANDE3387.NX.ARS</b>
+            </div>
+            <button class="menu-btn btn-support" style="padding: 10px; font-size: 1rem; margin-top: 15px;" onclick="copyAlias()">Copiar Alias</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showView(viewId) {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.getElementById(viewId).classList.add('active');
+        if(viewId !== 'game-view') {
+            clearInterval(gameInterval);
+        }
+    }
+
+    function copyAlias() {
+        navigator.clipboard.writeText("AFERNANDE3387.NX.ARS");
+        alert("¡Alias copiado al portapapeles!");
+    }
+
+    function sendReport() {
+        const text = document.getElementById('report-text').value;
+        if(text.trim() === "") {
+            alert("Por favor ingresa una descripción.");
+            return;
+        }
+        alert("¡Denuncia enviada de forma anónima correctamente! Gracias por colaborar.");
+        document.getElementById('report-text').value = "";
+        showView('main-menu');
+    }
+
+    // LÓGICA DEL JUEGO AVANZADO
+    let gameInterval;
+    let timerInterval;
+    let score = 0;
+    let timeLeft = 20;
+
+    function startAppGame() {
+        showView('game-view');
+        score = 0;
+        timeLeft = 20;
+        document.getElementById('game-score').innerText = "Puntaje: " + score;
+        document.getElementById('game-timer').innerText = "Tiempo: " + timeLeft + "s";
+        
+        const board = document.getElementById('game-board');
+        board.innerHTML = "";
+
+        gameInterval = setInterval(spawnHazard, 800);
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            document.getElementById('game-timer').innerText = "Tiempo: " + timeLeft + "s";
+            if(timeLeft <= 0) {
+                clearInterval(gameInterval);
+                clearInterval(timerInterval);
+                board.innerHTML = `<div style="display:flex; align-items:center; justify-content:center; height:100%; font-weight:bold; font-size:1.2rem;">¡Juego terminado! Puntaje: ${score}</div>`;
+            }
+        }, 1000);
+    }
+
+    function spawnHazard() {
+        const board = document.getElementById('game-board');
+        if(!board) return;
+        const hazard = document.createElement('div');
+        hazard.classList.add('hazard');
+        hazard.innerHTML = "🔥";
+        
+        const maxX = board.clientWidth - 40;
+        const maxY = board.clientHeight - 40;
+        hazard.style.left = Math.floor(Math.random() * maxX) + 'px';
+        hazard.style.top = Math.floor(Math.random() * maxY) + 'px';
+
+        hazard.onclick = () => {
+            score += 10;
+            document.getElementById('game-score').innerText = "Puntaje: " + score;
+            hazard.remove();
+        };
+
+        board.appendChild(hazard);
+        setTimeout(() => { if(hazard) hazard.remove(); }, 1200);
+    }
+
+    // LÓGICA DE TRIVIA CON ALEATORIZACIÓN DE RESPUESTAS
+    const triviaQuestions = [
+        {
+            q: "¿Qué se debe hacer ante una alerta de Viento Zonda severo en San Juan?",
+            options: [
+                "Evitar encender fuego o realizar quemas de poda",
+                "Salir a hacer campamentos en zonas boscosas",
+                "Dejar las ventanas totalmente abiertas sin seguro"
+            ],
+            correct: 0
+        },
+        {
+            q: "¿Cuál es la forma correcta de apagar una fogata?",
+            options: [
+                "Dejar que se apague sola con el viento",
+                "Usar abundante agua y asegurar que no queden brasas calientes",
+                "Cubrirla levemente con hojas secas"
+            ],
+            correct: 1
+        },
+        {
+            q: "Si observas una columna de humo sospechosa en los cerros, ¿qué debes hacer?",
+            options: [
+                "Ignorarla si parece pequeña",
+                "Intentar apagarla solo con ramas",
+                "Avisar inmediatamente a emergencias (911 / Bomberos)"
+            ],
+            correct: 2
+        }
+    ];
+
+    let currentQuestionIndex = 0;
+
+    function startTrivia() {
+        showView('trivia-view');
+        currentQuestionIndex = 0;
+        loadTriviaQuestion();
+    }
+
+    function loadTriviaQuestion() {
+        const container = document.getElementById('trivia-container');
+        if(currentQuestionIndex >= triviaQuestions.length) {
+            container.innerHTML = `<h3>¡Trivia Completada!</h3><p style="text-align:center; margin-top:15px;">Has demostrado gran conocimiento para prevenir incendios.</p><button class="menu-btn btn-trivia" style="margin-top:20px;" onclick="startTrivia()">Reiniciar Trivia</button>`;
+            return;
+        }
+
+        const currentQ = triviaQuestions[currentQuestionIndex];
+        
+        let optionsWithIndex = currentQ.options.map((opt, idx) => ({ text: opt, originalIndex: idx }));
+        optionsWithIndex.sort(() => Math.random() - 0.5);
+
+        let html = `<p style="font-weight:bold; margin-bottom:10px;">${currentQ.q}</p><div class="trivia-options">`;
+        
+        optionsWithIndex.forEach((item) => {
+            let isCorrectStr = (item.originalIndex === currentQ.correct) ? "true" : "false";
+            html += `<button class="trivia-opt-btn" onclick="checkAnswer(${isCorrectStr})">${item.text}</button>`;
+        });
+        
+        html += `</div>`;
+        container.innerHTML = html;
+    }
+
+    function checkAnswer(isCorrect) {
+        if(isCorrect) {
+            alert("¡Respuesta correcta!");
+        } else {
+            alert("Respuesta incorrecta. ¡A estudiar más sobre prevención!");
+        }
+        currentQuestionIndex++;
+        loadTriviaQuestion();
+    }
+</script>
+
+</body>
+</html>
